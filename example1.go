@@ -1,11 +1,10 @@
 package main
 
-/*
 import "fmt"
 
 // observer pattern
 
-type Observer interface {
+type Observerr interface {
 	update(string)
 	getId() string
 }
@@ -21,7 +20,7 @@ func (c *Customer) getId() string {
 }
 
 // subject
-type Subject interface {
+type Subjectt interface {
 	register()
 	deregister()
 	notifyAll()
@@ -29,7 +28,7 @@ type Subject interface {
 
 type Item struct {
 	//list of subscribers
-	list        []Observer
+	list        []Observerr
 	name        string
 	isAvailable bool
 }
@@ -38,12 +37,12 @@ func newItem(name string) *Item {
 	return &Item{name: name}
 }
 
-func (i *Item) register(o Observer) {
+func (i *Item) register(o Observerr) {
 	i.list = append(i.list, o)
 
 }
-func (i *Item) deregister(o Observer) {
-	i.list = removeFromSlice(i.list, o)
+func (i *Item) deregister(o Observerr) {
+	i.list = removeFromSlicee(i.list, o)
 
 }
 func (i *Item) notifyAll() {
@@ -60,7 +59,7 @@ func (i *Item) updateAvailibilty() {
 
 }
 
-func removeFromSlice(list []Observer, o Observer) []Observer {
+func removeFromSlicee(list []Observerr, o Observerr) []Observerr {
 
 	l := len(list)
 	for i, observer := range list {
@@ -89,5 +88,3 @@ func mainn() {
 	item.updateAvailibilty()
 
 }
-
-*/
