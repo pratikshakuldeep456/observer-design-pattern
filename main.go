@@ -3,59 +3,58 @@ package main
 import "fmt"
 
 // observer pattern
-
 type Observer interface {
-	update(string)
-	getId() string
+	update(content string, user string)
+	getID() string
 }
-type Customer struct {
-	email string
-}
-
-func (c *Customer) update(itemName string) {
-	fmt.Println(" sending email to customer", c.email, itemName)
-}
-func (c *Customer) getId() string {
-	return c.email
+type Follower struct {
+	name string
 }
 
-// subject
+func (f *Follower) getID() string {
+	return f.name
+}
+func (f *Follower) update(name, content string) {
+	fmt.Println("notify to follower about new content :", content, f.name)
+
+}
+
+// Subject
 type Subject interface {
-	register()
-	deregister()
-	notifyAll()
+	follow(Observer)
+	unfollow(Observer)
+	notifyFollower(string)
 }
 
-type Item struct {
-	//list of subscribers
-	list        []Observer
-	name        string
-	isAvailable bool
+type User struct {
+	name string
+	list []Observer
 }
 
-func newItem(name string) *Item {
-	return &Item{name: name}
+func newUser(name string) *User {
+	return &User{name: name}
+}
+func (u *User) follow(o Observer) {
+	u.list = append(u.list, o)
+	fmt.Printf("%s started following %s\n", o.getID(), u.name)
+
 }
 
-func (i *Item) register(o Observer) {
-	i.list = append(i.list, o)
+func (u *User) unfollow(o Observer) {
+	u.list = removeFromSlice(u.list, o)
+	fmt.Printf("%s stopped following %s\n", o.getID(), u.name)
 
 }
-func (i *Item) deregister(o Observer) {
-	i.list = removeFromSlice(i.list, o)
-
-}
-func (i *Item) notifyAll() {
-
-	for _, observer := range i.list {
-		observer.update(i.name)
+func (u *User) notifyAll(content string) {
+	for _, observer := range u.list {
+		observer.update(content, u.name)
 	}
+
 }
 
-func (i *Item) updateAvailibilty() {
-	fmt.Println("item availablce", i.name)
-	i.isAvailable = true
-	i.notifyAll()
+func (u *User) postUpdate(content string) {
+	fmt.Printf("%s posted: %s\n", u.name, content)
+	u.notifyAll(content)
 
 }
 
@@ -63,7 +62,7 @@ func removeFromSlice(list []Observer, o Observer) []Observer {
 
 	l := len(list)
 	for i, observer := range list {
-		if observer.getId() == o.getId() {
+		if observer.getID() == o.getID() {
 			list[l-1], list[i] = list[i], list[l-1]
 
 			return list[:l-1]
@@ -72,19 +71,23 @@ func removeFromSlice(list []Observer, o Observer) []Observer {
 
 	return list
 }
-
 func main() {
 
-	item := &Item{
-		name: "Shirt",
+	user1 := newUser("John")
+	user2 := newUser("krish")
+
+	follower1 := &Follower{
+		name: "Follower 1",
 	}
+	follower2 := &Follower{name: "Follower 2"}
+	follower3 := &Follower{name: "Follower 3"}
 
-	c1 := &Customer{email: " abc@fmail.com"}
-	c2 := &Customer{
-		email: " abcd@fmail.com"}
+	user1.follow(follower1)
+	user1.follow(follower2)
+	user2.follow(follower3)
 
-	item.register(c1)
-	item.register(c2)
-	item.updateAvailibilty()
+	user1.postUpdate("hello all, posting an content")
+	user2.postUpdate("posting another content")
 
+	user1.unfollow(follower1)
 }
